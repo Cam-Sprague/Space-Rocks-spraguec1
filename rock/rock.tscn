@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://rock/rock.gd" id="1_dg3f5"]
 [ext_resource type="Texture2D" uid="uid://r8j8taf7qvpw" path="res://assets/rock.png" id="2_hicxr"]
-[ext_resource type="PackedScene" uid="uid://cvpltsnj2v485" path="res://explosion.tscn" id="3_rykpd"]
+[ext_resource type="PackedScene" uid="uid://cvpltsnj2v485" path="res://explosion/explosion.tscn" id="3_rykpd"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_k1ug3"]
 bounce = 1.0
