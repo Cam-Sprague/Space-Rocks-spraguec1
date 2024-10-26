@@ -35,11 +35,12 @@ func _input(event):
 
 func new_game():
 	get_tree().call_group("rocks", "queue_free")
+	get_tree().call_group("enemies", "queue_free")
+	$Player.reset()
 	level = 0
 	score = 0
 	$HUD.update_score(score)
 	$HUD.show_message("Get Ready!")
-	$Player.reset()
 	await $HUD/Timer.timeout
 	playing = true
 	

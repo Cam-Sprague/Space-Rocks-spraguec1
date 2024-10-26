@@ -23,6 +23,7 @@ var screensize = Vector2.ZERO
 var shield = 0: set = set_shield
 
 func _ready():
+	$Sprite2D.hide()
 	change_state(ALIVE)
 	screensize = get_viewport_rect().size
 	$GunCooldown.wait_time = fire_rate
@@ -46,6 +47,7 @@ func change_state(new_state):
 		DEAD:
 			$CollisionShape2D.set_deferred("disabled", true)
 			$Sprite2D.hide()
+			$EngineSound.stop()
 			linear_velocity = Vector2.ZERO
 			dead.emit()
 	state = new_state
@@ -66,9 +68,13 @@ func get_input():
 		return
 	if Input.is_action_pressed("thrust"):
 		thrust = transform.x * engine_power
-	rotation_dir = Input.get_axis("rotate_left", "rotate_right")
+		if not $EngineSound.playing:
+			$EngineSound.play()
+	else: 
+		$EngineSound.stop()
 	if Input.is_action_pressed("shoot") and can_shoot:
 		shoot()
+	rotation_dir = Input.get_axis("rotate_left", "rotate_right")
 
 func _physics_process(delta):
 	constant_force = thrust
@@ -91,6 +97,7 @@ func shoot():
 	var b = bullet_scene.instantiate()
 	get_tree().root.add_child(b)
 	b.start($Muzzle.global_transform)
+	$LaserSound.play()
 
 
 func _on_gun_cooldown_timeout():

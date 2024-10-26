@@ -35,7 +35,7 @@ func update_shield(value):
 	shield_bar.texture_progress = bar_textures["green"]
 	if value < 0.4:
 		shield_bar.texture_progress = bar_textures["red"]
-	if value < 0.7:
+	elif value < 0.7:
 		shield_bar.texture_progress = bar_textures["yellow"]
 	shield_bar.value = value
 
