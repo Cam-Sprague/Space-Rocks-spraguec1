@@ -111,7 +111,6 @@ func get_input():
 	else: 
 		$EngineSound.stop()
 	rotation_dir = Input.get_axis("rotate_left", "rotate_right")
-	print("State: ", state, "Rotation Dir: ", rotation_dir)
 	if Input.is_action_pressed("shoot") and can_shoot:
 		shoot()
 
