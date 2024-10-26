@@ -5,7 +5,7 @@ var state = INIT
 @export var engine_power = 500
 @export var spin_power = 8000
 @export var bullet_scene : PackedScene
-@export var fire_rate = .25
+@export var fire_rate = 0.25
 
 signal lives_changed
 signal dead
@@ -59,9 +59,9 @@ func get_input():
 	if Input.is_action_pressed("thrust"):
 		thrust = transform.x * engine_power
 	rotation_dir = Input.get_axis("rotate_left", "rotate_right")
-	if Input.is_action_pressed("shoot"):
+	if Input.is_action_pressed("shoot") and can_shoot:
 		shoot()
-	
+
 func _physics_process(delta):
 	constant_force = thrust
 	constant_torque = rotation_dir * spin_power
