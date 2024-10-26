@@ -32,6 +32,7 @@ func _on_body_entered(body):
 	if body.is_in_group("rocks"):
 		return
 	explode()
+	body.shield -= 50
 	
 func shoot_pulse(n, delay):
 	for i in n:
