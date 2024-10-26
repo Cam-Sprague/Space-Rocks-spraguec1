@@ -8,10 +8,11 @@ var level = 0
 var score = 0
 var playing = false
 
-
+# Function to set viewport size when the game opens
 func _ready():
 	screensize = get_viewport().get_visible_rect().size
 	
+# Function to check if all rocks are destroyed to move on to next wave
 func _process(delta):
 	if not playing:
 		return
@@ -19,7 +20,7 @@ func _process(delta):
 	if get_tree().get_nodes_in_group("rocks").size() == 0:
 		new_level()
 		
-
+# Function to allow the player to pause the game
 func _input(event):
 	if event.is_action_pressed("pause"):
 		if not playing:
@@ -33,6 +34,27 @@ func _input(event):
 			message.text = ""
 			message.hide()
 
+# Function to split rocks once they are shot by player/ destroy rocks when they
+# get too small
+func _on_rock_exploded(size, radius, pos, vel):
+	$ExplosionSound.play()
+	if size <= 1:
+		return
+	for offset in [-1, 1]:
+		var dir = $Player.position.direction_to(pos).orthogonal() * offset
+		var newpos = pos + dir * radius
+		var newval = dir * vel.length() * 1.1
+		spawn_rock(size - 1, newpos, newval)
+		
+# Function to spawn enemy after the enemy timer has ended
+func _on_enemy_timer_timeout():
+	var e = enemy_scene.instantiate()
+	add_child(e)
+	e.target = $Player
+	$EnemyTimer.start(randf_range(20, 40))
+
+# Function to remove old rocks/enemies once the game has started, additionally
+# playing background music and overall reseting the game for a new run
 func new_game():
 	get_tree().call_group("rocks", "queue_free")
 	get_tree().call_group("enemies", "queue_free")
@@ -45,14 +67,20 @@ func new_game():
 	await $HUD/Timer.timeout
 	playing = true
 	
+# Function to move onto the next wave once the player has finished the previous
+# wave
 func new_level():
 	level += 1
+	score += 1
+	$HUD.update_score(score)
 	$LevelupSound.play()
 	$HUD.show_message("Wave %s" % level)
 	for i in level:
 		spawn_rock(3)
 	$EnemyTimer.start(randf_range(5, 10))
 
+# Function to randomly spawn rocks at the edge of the screen for the beginning
+# of new waves
 func spawn_rock(size, pos=null, vel=null):
 	if pos == null:
 		$RockPath/RockSpawn.progress = randi()
@@ -65,24 +93,8 @@ func spawn_rock(size, pos=null, vel=null):
 	call_deferred("add_child", r)
 	r.exploded.connect(self._on_rock_exploded)
 	
-func _on_rock_exploded(size, radius, pos, vel):
-	$ExplosionSound.play()
-	if size <= 1:
-		return
-	for offset in [-1, 1]:
-		var dir = $Player.position.direction_to(pos).orthogonal() * offset
-		var newpos = pos + dir * radius
-		var newval = dir * vel.length() * 1.1
-		spawn_rock(size - 1, newpos, newval)
-		
+# Function to end the game once the player has ran out of lives
 func game_over():
 	playing = false
 	$HUD.game_over()
 	$Music.stop()
-
-
-func _on_enemy_timer_timeout():
-	var e = enemy_scene.instantiate()
-	add_child(e)
-	e.target = $Player
-	$EnemyTimer.start(randf_range(20, 40))

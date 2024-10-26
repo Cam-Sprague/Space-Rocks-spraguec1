@@ -7,6 +7,15 @@ var scale_factor = 0.2
 
 signal exploded
 
+# Function to make rocks wrap around screen like player does
+func _integrate_forces(physics_state):
+	var xform = physics_state.transform
+	xform.origin.x = wrap(xform.origin.x, 0-radius, screensize.x)
+	xform.origin.y = wrap(xform.origin.y, 0-radius, screensize.y)
+	physics_state.transform = xform
+
+# Function to spawn rocks at different positions, speeds and sizes(depending 
+# on if they just split from another rock or not)
 func start(_position, _velocity, _size):
 	position = _position
 	size = _size
@@ -20,12 +29,7 @@ func start(_position, _velocity, _size):
 	angular_velocity = randf_range(-PI, PI)
 	$Explosion.scale = Vector2.ONE * 0.75 * size
 	
-func _integrate_forces(physics_state):
-	var xform = physics_state.transform
-	xform.origin.x = wrap(xform.origin.x, 0-radius, screensize.x)
-	xform.origin.y = wrap(xform.origin.y, 0-radius, screensize.y)
-	physics_state.transform = xform
-
+# Function to explode rocks, removing them from screen
 func explode():
 	$CollisionShape2D.set_deferred("disabled", true)
 	$Sprite2D.hide()
